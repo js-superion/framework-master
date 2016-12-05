@@ -19,7 +19,8 @@
 
 
     <!--car share base string-->
-    <string name="sync_label_carshare">拼车</string>
+    <string name="sync_label_find_person">同步找人数据</string>
+    <string name="sync_label_find_car">同步找车数据</string>
 
     <string name="log_find_person">找人</string>
     <string name="log_find_car">找车</string>

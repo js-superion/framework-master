@@ -27,8 +27,8 @@ public class CarSeat extends OModel {
     OColumn wait_point = new OColumn("候车点",CarPoint.class,OColumn.RelationType.ManyToOne);
     OColumn person_num = new OColumn("座位",OInteger.class);
     OColumn remark = new OColumn("备注",OVarchar.class).setSize(80);
-    public CarSeat(Context context, String model_name, OUser user) {
-        super(context, model_name, user);
+    public CarSeat(Context context,  OUser user) {
+        super(context, "car.seat", user);
     }
 
 

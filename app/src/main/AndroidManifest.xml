@@ -106,36 +106,51 @@
             android:name="com.odoo.addons.customers.CustomerDetails"
             android:windowSoftInputMode="adjustPan" />
 
-        <!-- 发车 Provider & Service  // -->
+        <!-- 找人 Provider & Service  // -->
         <provider
-            android:name="com.odoo.addons.carshare.providers.CarDepartureProvider"
+            android:name="com.odoo.addons.carshare.providers.DepartureProvider"
             android:authorities="${applicationId}.carshare.provider.content.sync.car_departure"
-            android:label="@string/sync_label_carshare"
+            android:label="@string/sync_label_find_person"
             android:multiprocess="true" />
 
         <service
-            android:name="com.odoo.addons.carshare.services.CarShareSyncService"
+            android:name="com.odoo.addons.carshare.services.DepartureSyncService"
             android:exported="true"
-            android:process=":sync_cardeparture">
+            android:process=":sync_departure">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
 
             <meta-data
                 android:name="android.content.SyncAdapter"
-                android:resource="@xml/carshare_sync_adapter" />
+                android:resource="@xml/departure_sync_adapter" />
         </service>
-
-        <!-- 找车 Provider & Service  // -->
-        <provider
-            android:name="com.odoo.addons.carshare.providers.CarSeatProvider"
-            android:authorities="${applicationId}.carshare.provider.content.sync.car_seat"
-            android:label="@string/sync_label_carshare"
-            android:multiprocess="true" />
-
         <activity
             android:name="com.odoo.addons.carshare.DepartureDetail"
             android:windowSoftInputMode="adjustPan" />
+
+        <!-- 找车 Provider & Service  // -->
+        <provider
+            android:name="com.odoo.addons.carshare.providers.SeatProvider"
+            android:authorities="${applicationId}.carshare.provider.content.sync.car_seat"
+            android:label="@string/sync_label_find_car"
+            android:multiprocess="true" />
+        <service
+            android:name="com.odoo.addons.carshare.services.SeatSyncService"
+            android:exported="true"
+            android:process=":sync_seat">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/seat_sync_adapter" />
+        </service>
+        <activity
+            android:name="com.odoo.addons.carshare.SeatDetail"
+            android:windowSoftInputMode="adjustPan" />
+
     </application>
 
 </manifest>

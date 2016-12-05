@@ -72,7 +72,7 @@ public class Seat extends BaseFragment implements ISyncStatusObserverListener,
         mView = view;
         mType = Seat.Type.valueOf(getArguments().getString(EXTRA_KEY_TYPE));
         ListView mPartnersList = (ListView) view.findViewById(R.id.listview);
-        mAdapter = new OCursorListAdapter(getActivity(), null, R.layout.car_departure_row);
+        mAdapter = new OCursorListAdapter(getActivity(), null, R.layout.car_seat_row);
         mAdapter.setOnViewBindListener(this);
         //this setHasSectionIndexers second param represent quick search view on activity
         mAdapter.setHasSectionIndexers(true, "remark");
@@ -86,16 +86,16 @@ public class Seat extends BaseFragment implements ISyncStatusObserverListener,
     @Override
     public void onViewBind(View view, Cursor cursor, ODataRow row) {
 
-        OControls.setText(view, R.id.leave_time, R.string.label_leave_time+row.getString("departure_time"));
-        OControls.setText(view, R.id.person_num, row.getString("seat_num")==null ? " "
-                :R.string.label_person_num+row.getString("seat_num"));
+        OControls.setText(view, R.id.leave_time, R.string.label_leave_time+row.getString("leave_time"));
+        OControls.setText(view, R.id.person_num, row.getString("person_num")==null ? " "
+                :R.string.label_person_num+row.getString("person_num"));
         OControls.setText(view, R.id.mobile_phone,row.getString("mobile_phone")==null ? " "
                 :R.string.label_mobile_phone+row.getString("mobile_phone"));
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle data) {
-        String where = "departure_time >= ?";
+        String where = "leave_time >= ?";
         List<String> args = new ArrayList<>();
         args.add("2016-12-01");
         if (mCurFilter != null) {
@@ -105,7 +105,7 @@ public class Seat extends BaseFragment implements ISyncStatusObserverListener,
         String selection = (args.size() > 0) ? where : null;
         String[] selectionArgs = (args.size() > 0) ? args.toArray(new String[args.size()]) : null;
         return new CursorLoader(getActivity(), db().uri(),
-                null, null, null, "departure_time");
+                null, null, null, "leave_time");
     }
 
     @Override
@@ -155,7 +155,7 @@ public class Seat extends BaseFragment implements ISyncStatusObserverListener,
     @Override
     public List<ODrawerItem> drawerMenus(Context context) {
         List<ODrawerItem> items = new ArrayList<>();
-        items.add(new ODrawerItem(KEY).setTitle(_s(R.string.menu_find_car))
+        items.add(new ODrawerItem(KEY).setTitle("找车")
                 .setIcon(R.drawable.ic_action_customers)
                 .setExtra(extra(Type.CarSeat))
                 .setInstance(new Seat()));
@@ -222,8 +222,8 @@ public class Seat extends BaseFragment implements ISyncStatusObserverListener,
         if (row != null) {
             data = row.getPrimaryBundleData();
         }
-        data.putString(DepartureDetail.KEY_CARSHARE_TYPE, mType.toString());
-        IntentUtils.startActivity(getActivity(), DepartureDetail.class, data);
+        data.putString(SeatDetail.KEY_CARSHARE_TYPE, mType.toString());
+        IntentUtils.startActivity(getActivity(), SeatDetail.class, data);
     }
 
     @Override

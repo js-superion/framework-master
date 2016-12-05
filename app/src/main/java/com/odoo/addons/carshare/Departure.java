@@ -162,7 +162,7 @@ public class Departure extends BaseFragment implements ISyncStatusObserverListen
     @Override
     public List<ODrawerItem> drawerMenus(Context context) {
         List<ODrawerItem> items = new ArrayList<>();
-        items.add(new ODrawerItem(KEY).setTitle(_s(R.string.menu_find_person))
+        items.add(new ODrawerItem(KEY).setTitle("找人")
                 .setIcon(R.drawable.ic_action_customers)
                 .setExtra(extra(Type.CarDeparture))
                 .setInstance(new Departure()));

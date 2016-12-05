@@ -20,6 +20,7 @@
 package com.odoo.config;
 
 import com.odoo.addons.carshare.Departure;
+import com.odoo.addons.carshare.Seat;
 import com.odoo.addons.customers.Customers;
 import com.odoo.core.support.addons.AddonsHelper;
 import com.odoo.core.support.addons.OAddon;
@@ -33,5 +34,6 @@ public class Addons extends AddonsHelper {
      * OAddon partners = new OAddon(Partners.class).setDefault();
      */
     OAddon customers = new OAddon(Customers.class).setDefault();
-    OAddon carshare = new OAddon(Departure.class);
+    OAddon departure = new OAddon(Departure.class);
+    OAddon carseat = new OAddon(Seat.class);
 }
