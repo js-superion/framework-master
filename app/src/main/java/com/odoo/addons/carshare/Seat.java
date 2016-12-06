@@ -86,11 +86,14 @@ public class Seat extends BaseFragment implements ISyncStatusObserverListener,
     @Override
     public void onViewBind(View view, Cursor cursor, ODataRow row) {
 
-        OControls.setText(view, R.id.leave_time, R.string.label_leave_time+row.getString("leave_time"));
+        OControls.setText(view, R.id.end_point, row.getString("end_point")==null ? " "
+                :_s(R.string.label_end_point)+row.getString("end_point"));
         OControls.setText(view, R.id.person_num, row.getString("person_num")==null ? " "
-                :R.string.label_person_num+row.getString("person_num"));
-        OControls.setText(view, R.id.mobile_phone,row.getString("mobile_phone")==null ? " "
-                :R.string.label_mobile_phone+row.getString("mobile_phone"));
+                :_s(R.string.label_person_num)+row.getString("person_num"));
+        OControls.setText(view, R.id.leave_time, row.getString("leave_time")==null ? " "
+                :_s(R.string.label_leave_time)+row.getString("leave_time"));
+        OControls.setText(view, R.id.wait_point,row.getString("wait_point")==null ? " "
+                :_s(R.string.label_wait_point)+row.getString("wait_point"));
     }
 
     @Override
@@ -130,7 +133,7 @@ public class Seat extends BaseFragment implements ISyncStatusObserverListener,
                     OControls.setVisible(mView, R.id.data_list_no_item);
                     setHasSwipeRefreshView(mView, R.id.data_list_no_item, Seat.this);
                     OControls.setImage(mView, R.id.icon, R.drawable.ic_action_customers);
-                    OControls.setText(mView, R.id.title, _s(R.string.label_no_customer_found));
+                    OControls.setText(mView, R.id.title, _s(R.string.label_no_person_found));
                     OControls.setText(mView, R.id.subTitle, "");
                 }
             }, 500);

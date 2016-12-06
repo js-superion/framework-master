@@ -174,7 +174,7 @@ public class SeatDetail extends OdooCompatActivity
     }
 
     private void checkControls() {
-        findViewById(R.id.mobile_phone).setOnClickListener(this);
+//        findViewById(R.id.mobile_phone).setOnClickListener(this);
 //        findViewById(R.id.website).setOnClickListener(this);
 //        findViewById(R.id.email).setOnClickListener(this);
 //        findViewById(R.id.phone_number).setOnClickListener(this);

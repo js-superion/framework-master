@@ -129,6 +129,25 @@
             android:name="com.odoo.addons.carshare.DepartureDetail"
             android:windowSoftInputMode="adjustPan" />
 
+        <!-- 站点数据 Provider  // -->
+        <provider
+            android:name="com.odoo.addons.carshare.providers.PointProvider"
+            android:authorities="${applicationId}.carshare.provider.content.sync.car_point"
+            android:label="@string/sync_label_car_point"
+            android:multiprocess="true" />
+        <service
+            android:name="com.odoo.addons.carshare.services.PointSyncService"
+            android:exported="true"
+            android:process=":sync_point">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/seat_sync_adapter" />
+        </service>
+
         <!-- 找车 Provider & Service  // -->
         <provider
             android:name="com.odoo.addons.carshare.providers.SeatProvider"

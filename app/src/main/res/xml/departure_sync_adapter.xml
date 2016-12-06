@@ -1,5 +1,5 @@
 <sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
     android:accountType="com.odoo.auth"
-    android:contentAuthority="${applicationId}.carshare.provider.content.sync.car_departure"
+    android:contentAuthority="com.odoo.carshare.provider.content.sync.car_departure"
     android:supportsUploading="true"
     android:userVisible="true" />

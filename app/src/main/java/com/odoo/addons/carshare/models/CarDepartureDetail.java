@@ -19,7 +19,8 @@ public class CarDepartureDetail extends OModel {
             ".carshare.provider.content.sync.car_departure_detail";
 
     OColumn departure_id = new OColumn("发车记录",CarDeparture.class, OColumn.RelationType.ManyToOne);
-    OColumn point_name = new OColumn("站点", OVarchar.class);
+//    OColumn point_name = new OColumn("站点", OVarchar.class);
+    OColumn point_name = new OColumn("站点",CarPoint.class,OColumn.RelationType.ManyToOne);
 
     public CarDepartureDetail(Context context, OUser user) {
         super(context, "car.departure.detail", user);

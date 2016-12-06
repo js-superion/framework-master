@@ -5,6 +5,7 @@ import android.net.Uri;
 
 import com.odoo.BuildConfig;
 import com.odoo.core.orm.OModel;
+import com.odoo.core.orm.annotation.Odoo;
 import com.odoo.core.orm.fields.OColumn;
 import com.odoo.core.orm.fields.types.ODateTime;
 import com.odoo.core.orm.fields.types.OInteger;
@@ -23,7 +24,11 @@ public class CarDeparture extends OModel {
     OColumn name = new OColumn("单号", OVarchar.class);
     OColumn departure_time = new OColumn("时间", ODateTime.class);
     OColumn start_point = new OColumn("起点",CarPoint.class,OColumn.RelationType.ManyToOne);
+    @Odoo.Functional(method="savePointName", depends = {"start_point"}, store = true)
+    OColumn start_point_name = new OColumn("起点名称",OVarchar.class).setLocalColumn();
     OColumn end_point = new OColumn("终点",CarPoint.class,OColumn.RelationType.ManyToOne);
+    @Odoo.Functional(method="savePointName", depends = {"end_point"}, store = true)
+    OColumn end_point_name = new OColumn("终点名称",OVarchar.class).setLocalColumn();
     OColumn seat_num = new OColumn("座位",OInteger.class);
     OColumn mobile_phone = new OColumn("电话",OVarchar.class).setSize(15);
     OColumn remark = new OColumn("备注",OVarchar.class).setSize(80);

@@ -76,7 +76,7 @@ public class Departure extends BaseFragment implements ISyncStatusObserverListen
         mAdapter = new OCursorListAdapter(getActivity(), null, R.layout.car_departure_row);
         mAdapter.setOnViewBindListener(this);
         //this setHasSectionIndexers second param represent quick search view on activity
-        mAdapter.setHasSectionIndexers(true, "remark");
+        mAdapter.setHasSectionIndexers(true, "name");
         mPartnersList.setAdapter(mAdapter);
         mPartnersList.setFastScrollAlwaysVisible(true);//
         mPartnersList.setOnItemClickListener(this);
@@ -93,11 +93,12 @@ public class Departure extends BaseFragment implements ISyncStatusObserverListen
 //            img = BitmapUtils.getBitmapImage(getActivity(), row.getString("image_small"));
 //        }
 //        OControls.setImage(view, R.id.image_small, img);
-        OControls.setText(view, R.id.departure_time, R.string.label_departure_time+row.getString("departure_time"));
+        OControls.setText(view, R.id.departure_time, row.getString("departure_time")==null?" "
+                :_s(R.string.label_departure_time)+row.getString("departure_time"));
         OControls.setText(view, R.id.seat_num, row.getString("seat_num")==null ? " "
-                :R.string.label_seat_num+row.getString("seat_num"));
+                :_s(R.string.label_seat_num)+row.getString("seat_num"));
         OControls.setText(view, R.id.mobile_phone,row.getString("mobile_phone")==null ? " "
-                : R.string.label_mobile_phone+ row.getString("mobile_phone"));
+                : _s(R.string.label_mobile_phone)+ row.getString("mobile_phone"));
     }
 
     @Override
@@ -137,7 +138,7 @@ public class Departure extends BaseFragment implements ISyncStatusObserverListen
                     OControls.setVisible(mView, R.id.data_list_no_item);
                     setHasSwipeRefreshView(mView, R.id.data_list_no_item, Departure.this);
                     OControls.setImage(mView, R.id.icon, R.drawable.ic_action_customers);
-                    OControls.setText(mView, R.id.title, _s(R.string.label_no_customer_found));
+                    OControls.setText(mView, R.id.title, _s(R.string.label_no_car_found));
                     OControls.setText(mView, R.id.subTitle, "");
                 }
             }, 500);
