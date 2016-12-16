@@ -169,6 +169,9 @@
         <activity
             android:name="com.odoo.addons.carshare.SeatDetail"
             android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.odoo.addons.carshare.AddPointWizard"
+            android:windowSoftInputMode="adjustPan" />
 
     </application>
 

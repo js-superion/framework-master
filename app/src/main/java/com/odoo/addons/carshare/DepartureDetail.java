@@ -1,5 +1,7 @@
 package com.odoo.addons.carshare;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -10,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -17,11 +20,14 @@ import com.odoo.App;
 import com.odoo.R;
 import com.odoo.addons.carshare.models.CarDeparture;
 import com.odoo.addons.carshare.models.CarDepartureDetail;
+import com.odoo.addons.carshare.models.CarPoint;
 import com.odoo.addons.customers.utils.ShareUtil;
 import com.odoo.base.addons.ir.feature.OFileManager;
+import com.odoo.base.addons.res.ResPartner;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OModel;
 import com.odoo.core.orm.OValues;
+import com.odoo.core.orm.ServerDataHelper;
 import com.odoo.core.orm.fields.OColumn;
 import com.odoo.core.rpc.helper.OdooFields;
 import com.odoo.core.rpc.helper.utils.gson.OdooResult;
@@ -29,9 +35,18 @@ import com.odoo.core.support.OdooCompatActivity;
 import com.odoo.core.utils.BitmapUtils;
 import com.odoo.core.utils.IntentUtils;
 import com.odoo.core.utils.OAlert;
+import com.odoo.core.utils.OControls;
 import com.odoo.core.utils.OResource;
 import com.odoo.core.utils.OStringColorUtil;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import odoo.controls.ExpandableListControl;
 import odoo.controls.OField;
 import odoo.controls.OForm;
 
@@ -42,13 +57,19 @@ import odoo.controls.OForm;
 public class DepartureDetail extends OdooCompatActivity
         implements View.OnClickListener, OField.IOnFieldValueChangeListener{
     public static final String TAG = DepartureDetail.class.getSimpleName();
+    public static final int REQUEST_ADD_ITEMS = 323;
     public static String KEY_CARSHARE_TYPE = "carshare_type";
     private final String KEY_MODE = "key_edit_mode";
     private final String KEY_NEW_IMAGE = "key_new_image";
     private Bundle extras;
     private CarDeparture carDeparture;
-    private CarDepartureDetail carDepartureDetail;
+    private ExpandableListControl mList;
+    private List<Object> objects = new ArrayList<>();
+    private HashMap<String, Float> lineValues = new HashMap<>();
+    private HashMap<String, Integer> lineIds = new HashMap<>();
+    private ExpandableListControl.ExpandableListAdapter mAdapter;
     private ODataRow record = null;
+    private CarPoint carPoint = null;
     private ImageView userImage = null;
     private OForm mForm;
     private App app;
@@ -85,12 +106,14 @@ public class DepartureDetail extends OdooCompatActivity
         }
         app = (App) getApplicationContext();
         carDeparture = new CarDeparture(this, null);
+        carPoint = new CarPoint(this,null);
         extras = getIntent().getExtras();
         if (hasRecordInExtra())
             carShareType = Departure.Type.valueOf(extras.getString(KEY_CARSHARE_TYPE));
         if (!hasRecordInExtra())
             mEditMode = true;
         setupToolbar();
+        initAdapter();
     }
     private boolean hasRecordInExtra() {
         return extras != null && extras.containsKey(OColumn.ROW_ID);
@@ -116,6 +139,7 @@ public class DepartureDetail extends OdooCompatActivity
             findViewById(R.id.departure_view_layout).setVisibility(View.GONE);
             findViewById(R.id.departure_edit_layout).setVisibility(View.VISIBLE);
             OField is_company = (OField) findViewById(R.id.is_company_edit);
+            findViewById(R.id.layoutAddItem).setOnClickListener(this);
             is_company.setOnValueChangeListener(this);
         } else {
             mForm = (OForm) findViewById(R.id.departure_view_form);
@@ -131,6 +155,7 @@ public class DepartureDetail extends OdooCompatActivity
 //            userImage.setColorFilter(Color.parseColor("#ffffff"));
 //            userImage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             mForm.setEditable(mEditMode);
+
             mForm.initForm(null);
         } else {
             int rowId = extras.getInt(OColumn.ROW_ID);
@@ -171,13 +196,51 @@ public class DepartureDetail extends OdooCompatActivity
             case R.id.captureImage:
                 fileManager.requestForFile(OFileManager.RequestType.IMAGE_OR_CAPTURE_HIGH_IMAGE);
                 break;
+            case R.id.layoutAddItem:
+                if (mForm.getValues() != null) {
+                    Intent intent = new Intent(this, AddPointWizard.class);
+                    Bundle extra = new Bundle();
+                    for (String key : lineValues.keySet()) {
+                        extra.putFloat(key, lineValues.get(key));
+                    }
+                    intent.putExtras(extra);
+                    startActivityForResult(intent, REQUEST_ADD_ITEMS);
+                }
+                break;
         }
 
     }
 
+    private void initAdapter() {
+        mList = (ExpandableListControl) findViewById(R.id.expListCarPoint);
+        mList.setVisibility(View.VISIBLE);
+        if (extras != null && record != null) {
+            List<ODataRow> lines = record.getO2MRecord("details").browseEach();
+            for (ODataRow line : lines) {
+                int point_id = carPoint.selectServerId(line.getInt("id"));
+                if (point_id != 0) {
+//                    lineValues.put(point_id + "", line.getString("product_uom_qty"));
+                    lineIds.put(point_id + "", line.getInt("id"));
+                }
+            }
+            objects.addAll(lines);
+        }
+        mAdapter = mList.getAdapter(R.layout.car_add_point_item, objects,
+                new ExpandableListControl.ExpandableListAdapterGetViewListener() {
+                    @Override
+                    public View getView(int position, View mView, ViewGroup parent) {
+                        ODataRow row = (ODataRow) mAdapter.getItem(position);
+                        OControls.setText(mView, R.id.point_name, row.getString("point_name"));
+                        return mView;
+                    }
+                });
+        mAdapter.notifyDataSetChanged(objects);
+    }
+    /**
+     * 设置在只读模式下，调用本地资源
+     * **/
     private void checkControls() {
         findViewById(R.id.mobile_phone).setOnClickListener(this);
-//        findViewById(R.id.website).setOnClickListener(this);
 //        findViewById(R.id.email).setOnClickListener(this);
 //        findViewById(R.id.phone_number).setOnClickListener(this);
 //        findViewById(R.id.mobile_number).setOnClickListener(this);
@@ -300,6 +363,8 @@ public class DepartureDetail extends OdooCompatActivity
         }
     }
 
+
+
     private class BigImageLoader extends AsyncTask<Integer, Void, String> {
 
         @Override
@@ -344,15 +409,23 @@ public class DepartureDetail extends OdooCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        OValues values = fileManager.handleResult(requestCode, resultCode, data);
-        if (values != null && !values.contains("size_limit_exceed")) {
+        if (requestCode == REQUEST_ADD_ITEMS && resultCode == Activity.RESULT_OK) {
+            lineValues.clear();
+            objects.clear();
+            objects.addAll(null);
+            mAdapter.notifyDataSetChanged(objects);
+        }else{
+            OValues values = fileManager.handleResult(requestCode, resultCode, data);
+            if (values != null && !values.contains("size_limit_exceed")) {
 //            newImage = values.getString("datas");
-            userImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            userImage.setColorFilter(null);
+                userImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                userImage.setColorFilter(null);
 //            userImage.setImageBitmap(BitmapUtils.getBitmapImage(this, newImage));
-        } else if (values != null) {
-            Toast.makeText(this, R.string.toast_image_size_too_large, Toast.LENGTH_LONG).show();
+            } else if (values != null) {
+                Toast.makeText(this, R.string.toast_image_size_too_large, Toast.LENGTH_LONG).show();
+            }
         }
+
     }
 
 

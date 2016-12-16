@@ -55,3 +55,4 @@ build/intermediates/dex-cache/cache.xml
 build/intermediates/proguard-files/proguard-android-optimize.txt-2.2.2
 build/intermediates/proguard-files/proguard-android.txt-2.2.2
 *.iml
+intro-slider-lib/intro-slider-lib.iml
