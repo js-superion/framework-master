@@ -47,7 +47,7 @@ public class AddPointWizard extends AppCompatActivity implements
     private int selected_position = -1;
     private LiveSearch mLiveDataLoader = null;
     private OColumn mCol = null;
-    private HashMap<String, Float> lineValues = new HashMap<>();
+    private HashMap<String, String> lineValues = new HashMap<>();
     private Boolean mLongClicked = false;
 
     @Override
@@ -65,7 +65,7 @@ public class AddPointWizard extends AppCompatActivity implements
             mList.setOnItemClickListener(this);
             mList.setOnItemLongClickListener(this);
             for (String key : extra.keySet()) {
-                lineValues.put(key, extra.getFloat(key));
+                lineValues.put(key, extra.getString(key));
             }
             for (Object local : carPoint.select()) {
                 ODataRow product = (ODataRow) local;
@@ -96,24 +96,29 @@ public class AddPointWizard extends AppCompatActivity implements
 
     private void generateView(View v, int position) {
         final ODataRow row = (ODataRow) objects.get(position);
-        Float qty = (lineValues.containsKey(row.getString("id")) &&
-                lineValues.get(row.getString("id")) > 0) ? lineValues.get(row.getString("id")) : 0;
-        if (qty <= 0) {
-            OControls.setGone(v, R.id.productQty);
-            OControls.setGone(v, R.id.remove_qty);
-        } else {
+//        Float qty = (lineValues.containsKey(row.getString("id")) &&
+//                lineValues.get(row.getString("id")) > 0) ? lineValues.get(row.getString("id")) : 0;
+//        if (qty <= 0) {
+        Boolean isExist = lineValues.containsKey(row.getString("id"));
+        if(isExist){
             OControls.setVisible(v, R.id.remove_qty);
-            v.findViewById(R.id.remove_qty).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Float lineQty = lineValues.get(row.getString("id"));
-                    lineValues.put(row.getString("id"), lineQty - 1);
-                    mAdapter.notifiyDataChange(objects);
-                }
-            });
             OControls.setVisible(v, R.id.productQty);
-            OControls.setText(v, R.id.productQty, qty + " ");
+        }else{
+            OControls.setGone(v, R.id.remove_qty);
+            OControls.setGone(v, R.id.productQty);
         }
+
+        v.findViewById(R.id.remove_qty).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                    Float lineQty = lineValues.get(row.getString("id"));
+                lineValues.remove(row.getString("id"));
+                mAdapter.notifiyDataChange(objects);
+            }
+        });
+//        OControls.setVisible(v, R.id.productQty);
+//        OControls.setText(v, R.id.productQty, qty + " ");
+//        }
         OControls.setText(v, R.id.point_name,
                 row.getString(carPoint.getDefaultNameColumn()));
         if (row.contains(OColumn.ROW_ID)
@@ -153,27 +158,27 @@ public class AddPointWizard extends AppCompatActivity implements
             QuickCreateRecordProcess quickCreateRecordProcess = new QuickCreateRecordProcess(this);
             quickCreateRecordProcess.execute(data);
         } else {
-            onLongClicked(data);
+//            onLongClicked(data);
         }
         return true;
     }
 
     private void onLongClicked(final ODataRow row) {
         mLongClicked = false;
-        final Float count = ((lineValues.containsKey(row.getString("id")))
-                ? lineValues.get(row.getString("id")) : 0);
+//        final Float count = ((lineValues.containsKey(row.getString("id")))
+//                ? lineValues.get(row.getString("id")) : 0);
         OAlert.inputDialog(this, "Quantity", new OAlert.OnUserInputListener() {
             @Override
             public void onViewCreated(EditText inputView) {
                 inputView.setInputType(InputType.TYPE_CLASS_NUMBER
                         | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
-                inputView.setText(count + "");
+//                inputView.setText(count + "");
             }
 
             @Override
             public void onUserInputted(Object value) {
-                float userData = Float.parseFloat(value.toString());
-                lineValues.put(row.getString("id"), userData);
+//                float userData = Float.parseFloat(value.toString());
+                lineValues.put(row.getString("id"), row.getString("name"));
                 mAdapter.notifiyDataChange(objects);
             }
         });
@@ -182,12 +187,12 @@ public class AddPointWizard extends AppCompatActivity implements
     @Override
     public void onRecordCreated(ODataRow row) {
         if (!mLongClicked) {
-            Float count = ((lineValues.containsKey(row.getString("id")))
-                    ? lineValues.get(row.getString("id")) : 0);
-            lineValues.put(row.getString("id"), ++count);
+//            Float count = ((lineValues.containsKey(row.getString("id")))
+//                    ? lineValues.get(row.getString("id")) : 0);
+            lineValues.put(row.getString("id"),row.getString("name"));
             mAdapter.notifiyDataChange(objects);
         } else {
-            onLongClicked(row);
+//            onLongClicked(row);
         }
     }
 
@@ -223,7 +228,7 @@ public class AddPointWizard extends AppCompatActivity implements
             case R.id.done:
                 Bundle data = new Bundle();
                 for (String key : lineValues.keySet()) {
-                    data.putFloat(key, lineValues.get(key));
+                    data.putString(key, lineValues.get(key));
                 }
                 Intent intent = new Intent();
                 intent.putExtras(data);

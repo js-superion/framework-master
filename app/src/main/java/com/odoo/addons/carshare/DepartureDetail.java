@@ -65,7 +65,7 @@ public class DepartureDetail extends OdooCompatActivity
     private CarDeparture carDeparture;
     private ExpandableListControl mList;
     private List<Object> objects = new ArrayList<>();
-    private HashMap<String, Float> lineValues = new HashMap<>();
+    private HashMap<String, String> lineValues = new HashMap<>();
     private HashMap<String, Integer> lineIds = new HashMap<>();
     private ExpandableListControl.ExpandableListAdapter mAdapter;
     private ODataRow record = null;
@@ -201,7 +201,7 @@ public class DepartureDetail extends OdooCompatActivity
                     Intent intent = new Intent(this, AddPointWizard.class);
                     Bundle extra = new Bundle();
                     for (String key : lineValues.keySet()) {
-                        extra.putFloat(key, lineValues.get(key));
+                        extra.putString(key, lineValues.get(key));
                     }
                     intent.putExtras(extra);
                     startActivityForResult(intent, REQUEST_ADD_ITEMS);
@@ -219,7 +219,7 @@ public class DepartureDetail extends OdooCompatActivity
             for (ODataRow line : lines) {
                 int point_id = carPoint.selectServerId(line.getInt("id"));
                 if (point_id != 0) {
-//                    lineValues.put(point_id + "", line.getString("product_uom_qty"));
+                    lineValues.put(point_id + "", line.getString("pointName"));
                     lineIds.put(point_id + "", line.getInt("id"));
                 }
             }
@@ -230,7 +230,7 @@ public class DepartureDetail extends OdooCompatActivity
                     @Override
                     public View getView(int position, View mView, ViewGroup parent) {
                         ODataRow row = (ODataRow) mAdapter.getItem(position);
-                        OControls.setText(mView, R.id.point_name, row.getString("point_name"));
+                        OControls.setText(mView, R.id.point_name, row.getString("pointName"));
                         return mView;
                     }
                 });
@@ -412,7 +412,15 @@ public class DepartureDetail extends OdooCompatActivity
         if (requestCode == REQUEST_ADD_ITEMS && resultCode == Activity.RESULT_OK) {
             lineValues.clear();
             objects.clear();
-            objects.addAll(null);
+            List<ODataRow> points = new ArrayList<>();
+            for (String key : data.getExtras().keySet()) {
+                    OValues values = new OValues();
+                    values.put("id", key);
+                    values.put("pointName", data.getExtras().getString(key));
+                    points.add(values.toDataRow());
+                    lineValues.put(key, data.getExtras().getString(key));
+            }
+            objects.addAll(points);
             mAdapter.notifyDataSetChanged(objects);
         }else{
             OValues values = fileManager.handleResult(requestCode, resultCode, data);

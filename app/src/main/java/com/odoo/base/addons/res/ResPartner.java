@@ -20,6 +20,7 @@
 package com.odoo.base.addons.res;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
 import com.odoo.BuildConfig;
@@ -55,6 +56,9 @@ public class ResPartner extends OModel {
     OColumn company_id = new OColumn("Company", ResCompany.class, OColumn.RelationType.ManyToOne);
     OColumn parent_id = new OColumn("Related Company", ResPartner.class, OColumn.RelationType.ManyToOne)
             .addDomain("is_company", "=", true);
+
+    @Odoo.Domain("[['country_id', '=', @country_id]]")
+    OColumn state_id = new OColumn("State", ResCountryState.class, OColumn.RelationType.ManyToOne);
     OColumn country_id = new OColumn("Country", ResCountry.class, OColumn.RelationType.ManyToOne);
     OColumn customer = new OColumn("Customer", OBoolean.class).setDefaultValue("true");
     OColumn supplier = new OColumn("Supplier", OBoolean.class).setDefaultValue("false");
@@ -114,5 +118,10 @@ public class ResPartner extends OModel {
         if (!row.getString("zip").equals("false"))
             add += " - " + row.getString("zip") + " ";
         return add;
+    }
+
+    @Override
+    public void onModelUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // Execute upgrade script
     }
 }

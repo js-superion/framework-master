@@ -66,7 +66,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -200,11 +199,11 @@ public class OdooWrapper<T> implements Response.Listener<JSONObject> {
             requestQueue.add(request);
         } else {
             JsonObjectRequest request = new JsonObjectRequest(url, postData, requestFuture, requestFuture);
+            request.setRetryPolicy(new DefaultRetryPolicy(new_request_timeout, new_request_max_retry,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             requestQueue.add(request);
             try {
-                OdooResponse response = parseToResponse(requestFuture.get(new_request_timeout,
-                        TimeUnit.MILLISECONDS));
-                backResponse.setResponse(response);
+                backResponse.setResponse(parseToResponse(requestFuture.get()));
             } catch (Exception e) {
                 OdooLog.e(e);
             }
@@ -497,9 +496,12 @@ public class OdooWrapper<T> implements Response.Listener<JSONObject> {
             }
             odooSession.setCurrencies(currencyList);
             if (mVersion.isEnterprise()) {
-                odooSession.setExpiration_date(response.getString("expiration_date"));
-                odooSession.setExpiration_reason(response.getString("expiration_reason"));
-                odooSession.setWarning_level(response.getString("warning"));
+                if (response.containsKey("expiration_date"))
+                    odooSession.setExpiration_date(response.getString("expiration_date"));
+                if (response.containsKey("expiration_reason"))
+                    odooSession.setExpiration_reason(response.getString("expiration_reason"));
+                if (response.containsKey("warning"))
+                    odooSession.setWarning_level(response.getString("warning"));
             }
             odooSession.setIs_admin(response.getBoolean("is_admin"));
             odooSession.setIs_superuser(response.getBoolean("is_superuser"));
@@ -598,6 +600,30 @@ public class OdooWrapper<T> implements Response.Listener<JSONObject> {
             params.put("offset", offset);
             params.put("limit", limit);
             params.put("sort", (sort == null) ? "" : sort);
+            newJSONPOSTRequest(url, params, callback, backResponse);
+        } catch (Exception e) {
+            OdooLog.e(e, e.getMessage());
+        }
+    }
+
+    public OdooResult executeWorkFlow(String model, int id, String signal) {
+        OdooSyncResponse response = new OdooSyncResponse();
+        executeWorkFlow(model, id, signal, null, response);
+        return validateResult(response);
+    }
+
+    public void executeWorkFlow(String model, int id, String signal, IOdooResponse callback) {
+        executeWorkFlow(model, id, signal, callback, null);
+    }
+
+    private void executeWorkFlow(String model, int id, String signal, IOdooResponse callback,
+                                 OdooSyncResponse backResponse) {
+        String url = serverURL + "/web/dataset/exec_workflow";
+        try {
+            JSONObject params = new JSONObject();
+            params.put("model", model);
+            params.put("id", id);
+            params.put("signal", signal);
             newJSONPOSTRequest(url, params, callback, backResponse);
         } catch (Exception e) {
             OdooLog.e(e, e.getMessage());

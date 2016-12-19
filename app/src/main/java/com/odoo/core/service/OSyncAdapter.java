@@ -263,7 +263,7 @@ public class OSyncAdapter extends AbstractThreadedSyncAdapter {
             if (!record.getUniqueIds().isEmpty()) {
                 ODomain domain = new ODomain();
                 domain.add("id", "in", record.getUniqueIds());
-                syncData(rel_model, user, domain, result, true, false);
+                syncData(rel_model, user, domain, result, false, false);
             }
             // Updating manyToOne record with their relation record row_id
             switch (record.getRelationType()) {
@@ -296,6 +296,7 @@ public class OSyncAdapter extends AbstractThreadedSyncAdapter {
             if (odoo == null) {
                 odoo = Odoo.createQuickInstance(context, user.getHost());
                 OUser mUser = odoo
+                        .withRetryPolicy(OConstants.RPC_REQUEST_TIME_OUT, OConstants.RPC_REQUEST_RETRIES)
                         .authenticate(user.getUsername(), user.getPassword(), user.getDatabase());
                 app.setOdoo(odoo, user);
                 if (mUser != null) {
