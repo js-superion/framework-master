@@ -76,7 +76,7 @@ public class Departure extends BaseFragment implements ISyncStatusObserverListen
         mAdapter = new OCursorListAdapter(getActivity(), null, R.layout.car_departure_row);
         mAdapter.setOnViewBindListener(this);
         //this setHasSectionIndexers second param represent quick search view on activity
-        mAdapter.setHasSectionIndexers(true, "name");
+        mAdapter.setHasSectionIndexers(true, "id");
         mPartnersList.setAdapter(mAdapter);
         mPartnersList.setFastScrollAlwaysVisible(true);//
         mPartnersList.setOnItemClickListener(this);

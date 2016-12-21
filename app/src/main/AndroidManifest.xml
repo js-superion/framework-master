@@ -121,6 +121,26 @@
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/departure_sync_adapter" />
         </service>
+
+        <provider
+            android:name="com.odoo.addons.carshare.providers.DepartureDetailProvider"
+            android:authorities="${applicationId}.carshare.provider.content.sync.car_departure_detail"
+            android:label="@string/sync_label_find_person"
+            android:multiprocess="true" />
+
+        <service
+            android:name="com.odoo.addons.carshare.services.DepartureDetailSyncService"
+            android:exported="true"
+            android:process=":sync_departure_detail">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/departure_detail_sync_adapter" />
+        </service>
+
         <activity
             android:name="com.odoo.addons.carshare.DepartureDetail"
             android:windowSoftInputMode="adjustPan" />
