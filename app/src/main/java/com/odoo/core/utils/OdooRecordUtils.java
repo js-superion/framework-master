@@ -99,6 +99,8 @@ public class OdooRecordUtils {
                             ODataRow m2o = row.getM2ORecord(col.getName()).browse();
                             if (m2o != null) {
                                 values.put(col.getSyncColumn(), m2o.getInt("id"));
+                            }  else {
+                                values.put(col.getSyncColumn(), false);
                             }
                         }
                         break;

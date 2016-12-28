@@ -33,7 +33,7 @@ public class Addons extends AddonsHelper {
      * Ex.:
      * OAddon partners = new OAddon(Partners.class).setDefault();
      */
-    OAddon customers = new OAddon(Customers.class).setDefault();
+//    OAddon customers = new OAddon(Customers.class).setDefault();
     OAddon departure = new OAddon(Departure.class);
-    OAddon carseat = new OAddon(Seat.class);
+    OAddon carseat = new OAddon(Seat.class).setDefault();
 }
