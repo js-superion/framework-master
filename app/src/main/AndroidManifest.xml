@@ -161,7 +161,7 @@
 
             <meta-data
                 android:name="android.content.SyncAdapter"
-                android:resource="@xml/seat_sync_adapter" />
+                android:resource="@xml/point_sync_adapter" />
         </service>
 
         <!-- 找车 Provider & Service  // -->

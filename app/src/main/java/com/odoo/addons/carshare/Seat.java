@@ -87,7 +87,7 @@ public class Seat extends BaseFragment implements ISyncStatusObserverListener,
     public void onViewBind(View view, Cursor cursor, ODataRow row) {
 
         OControls.setText(view, R.id.end_point, row.getString("end_point")==null ? " "
-                :_s(R.string.label_end_point)+row.getString("end_point"));
+                :_s(R.string.label_end_point)+row.getString("end_point_name"));
         OControls.setText(view, R.id.person_num, row.getString("person_num")==null ? " "
                 :_s(R.string.label_person_num)+row.getString("person_num"));
         OControls.setText(view, R.id.leave_time, row.getString("leave_time")==null ? " "
