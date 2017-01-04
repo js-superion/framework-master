@@ -124,4 +124,11 @@
     <string name="title_sync_limit">同步期限</string>
     <string name="label_notify_ring">提醒铃声</string>
     <string name="label_sync_settings">同步设置</string>
+    <!-- 同步设置中的摘要说明 -->
+    <string name="summary_sync_settings">启用或禁用数据同步</string>
+    <string name="summary_notification_ring_tone">设置提醒铃声</string>
+    <string name="summary_sync_interval">数据同步执行的频率</string>
+    <string name="summary_sync_limit">同步多久之前的数据</string>
+
+
 </resources>

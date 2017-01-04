@@ -6,7 +6,7 @@
         android:title="@string/label_sync_settings">
         <PreferenceScreen
             android:key="account_settings"
-            android:summary="Enable or disable data synchronization"
+            android:summary="@string/summary_sync_settings"
             android:title="@string/label_sync_settings">
             <intent android:action="android.settings.SYNC_SETTINGS" />
         </PreferenceScreen>
@@ -15,7 +15,7 @@
             android:title="@string/label_notify_ring"
             android:ringtoneType="notification"
             android:defaultValue="@string/notification_default_ring_tone"
-            android:summary="Set notification ring tone" />
+            android:summary="@string/summary_notification_ring_tone" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="sync_interval_settings"
@@ -25,7 +25,7 @@
             android:entries="@array/syncInterval"
             android:entryValues="@array/syncIntervalValues"
             android:key="sync_interval"
-            android:summary="Define how often synchronization will be performed"
+            android:summary="@string/summary_sync_interval"
             android:title="@string/title_sync_interval" />
     </PreferenceCategory>
     <PreferenceCategory
@@ -36,7 +36,7 @@
             android:entries="@array/syncDataLimit"
             android:entryValues="@array/syncDataLimitValues"
             android:key="sync_data_limit"
-            android:summary="Define how old data to be synchronized"
+            android:summary="@string/summary_sync_limit"
             android:title="@string/title_sync_limit" />
     </PreferenceCategory>
 
