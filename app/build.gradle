@@ -36,6 +36,8 @@ dependencies {
     compile 'com.google.android.gms:play-services-gcm:9.6.1'
     compile 'com.android.support:design:24.2.1'
     compile 'com.android.volley:volley:1.0.0'
+    compile 'joda-time:joda-time:2.9.7'
+    compile 'org.joda:joda-convert:1.8.1'
     compile project(':intro-slider-lib')
 }
 

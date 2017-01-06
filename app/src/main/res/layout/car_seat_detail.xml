@@ -32,22 +32,38 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:fieldLabelColor="@color/theme_secondary"
-                app:fieldName="end_point"
+                app:fieldName="start_point"
                 app:fieldTextAppearance="?android:textAppearanceMedium"
                 app:iconResource="@drawable/ic_action_universe"></odoo.controls.OField>
 
+            <View
+                style="@style/ViewSeparator"
+                android:layout_marginStart="72dp"
+                android:layout_marginLeft="72dp" />
 
             <odoo.controls.OField
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:fieldLabelColor="@color/theme_secondary"
-                app:fieldName="wait_point"
+                app:fieldName="end_point"
                 app:fieldTextAppearance="?android:textAppearanceMedium"
-                app:iconResource="@drawable/ic_action_message"></odoo.controls.OField>
-
+                app:iconResource="@drawable/ic_action_universe"></odoo.controls.OField>
             <View
                 style="@style/ViewSeparator"
+                android:layout_marginStart="72dp"
                 android:layout_marginLeft="72dp" />
+
+            <!--<odoo.controls.OField-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--app:fieldLabelColor="@color/theme_secondary"-->
+                <!--app:fieldName="wait_point"-->
+                <!--app:fieldTextAppearance="?android:textAppearanceMedium"-->
+                <!--app:iconResource="@drawable/ic_action_message"></odoo.controls.OField>-->
+
+            <!--<View-->
+                <!--style="@style/ViewSeparator"-->
+                <!--android:layout_marginLeft="72dp" />-->
 
             <odoo.controls.OField
                 android:layout_width="match_parent"
@@ -56,7 +72,10 @@
                 app:fieldName="person_num"
                 app:fieldTextAppearance="?android:textAppearanceMedium"
                 app:iconResource="@drawable/ic_action_phone"></odoo.controls.OField>
-
+            <View
+                style="@style/ViewSeparator"
+                android:layout_marginStart="72dp"
+                android:layout_marginLeft="72dp" />
             <odoo.controls.OField
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -67,6 +86,7 @@
 
             <View
                 style="@style/ViewSeparator"
+                android:layout_marginStart="72dp"
                 android:layout_marginLeft="72dp" />
 
             <odoo.controls.OField
@@ -114,7 +134,7 @@
                     android:layout_height="wrap_content"
                     app:fieldName="leave_time"
                     app:controlLabel="@string/label_leave_time"
-                    app:parsePattern="yyyy MMM dd ,HH:MM"
+                    app:parsePattern="yyyy MMM dd ,HH:mm"
                     app:iconResource="@drawable/ic_action_time_clock"
                     app:fieldTextAppearance="?android:textAppearanceLarge"
                     app:showLabel="false"></odoo.controls.OField>
@@ -126,16 +146,8 @@
                 <odoo.controls.OField
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:fieldName="end_point"
-                    app:controlLabel="@string/label_end_point"
-                    app:fieldTextAppearance="?android:textAppearanceMedium"
-                    app:iconResource="@drawable/ic_action_location"></odoo.controls.OField>
-
-                <odoo.controls.OField
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:fieldName="wait_point"
-                    app:controlLabel="@string/label_wait_point"
+                    app:fieldName="start_point"
+                    app:controlLabel="@string/label_start_point"
                     app:fieldTextAppearance="?android:textAppearanceMedium"
                     app:iconResource="@drawable/ic_action_location"></odoo.controls.OField>
                 <View
@@ -145,12 +157,35 @@
                 <odoo.controls.OField
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:fieldName="end_point"
+                    app:controlLabel="@string/label_end_point"
+                    app:fieldTextAppearance="?android:textAppearanceMedium"
+                    app:iconResource="@drawable/ic_action_location"></odoo.controls.OField>
+                <View
+                    style="@style/ViewSeparator"
+                    android:layout_marginStart="72dp"
+                    android:layout_marginLeft="72dp" />
+                <!--<odoo.controls.OField-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--app:fieldName="wait_point"-->
+                    <!--app:controlLabel="@string/label_wait_point"-->
+                    <!--app:fieldTextAppearance="?android:textAppearanceMedium"-->
+                    <!--app:iconResource="@drawable/ic_action_location"></odoo.controls.OField>-->
+                <!--<View-->
+                    <!--style="@style/ViewSeparator"-->
+                    <!--android:layout_marginLeft="72dp" />-->
+
+                <odoo.controls.OField
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     app:fieldName="person_num"
-                    app:controlLabel="@string/label_person_num"
+                    app:controlLabel="@string/label_person_num2"
                     app:fieldTextAppearance="?android:textAppearanceMedium"
                     app:iconResource="@drawable/ic_action_customers"></odoo.controls.OField>
                 <View
                     style="@style/ViewSeparator"
+                    android:layout_marginStart="72dp"
                     android:layout_marginLeft="72dp" />
                 <odoo.controls.OField
                     android:layout_width="match_parent"
@@ -162,6 +197,7 @@
 
                 <View
                     style="@style/ViewSeparator"
+                    android:layout_marginStart="72dp"
                     android:layout_marginLeft="72dp" />
 
                 <odoo.controls.OField
@@ -173,6 +209,7 @@
                     app:iconResource="@drawable/ic_action_message"></odoo.controls.OField>
                 <View
                     style="@style/ViewSeparator"
+                    android:layout_marginStart="72dp"
                     android:layout_marginLeft="72dp" />
 
             </LinearLayout>

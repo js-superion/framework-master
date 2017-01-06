@@ -16,11 +16,17 @@
     <string name="label_mobile_phone">电话:</string>
 
     <string name="label_leave_time">时间:</string>
-    <string name="label_person_num">人数:</string>
-    <string name="label_end_point">终点:</string>
+    <string name="label_person_num">人</string>
+    <string name="label_person_num2">人数</string>
+    <string name="label_end_point">终点:&#160;</string>
+    <string name="label_start_point">起点:&#160;</string>
     <string name="label_wait_point">候车点:</string>
     <string name="label_remark">备注</string>
     <string name="label_no_car_found">目前没有车要走</string>
     <string name="label_no_person_found">还没有人要坐车</string>
+
+    <!--这里定义的label，分别是ODatetimeField和OSelectionField中调用-->
+    <string name="label_datetime_null_value">点击选择时间</string>
+    <string name="label_selection_null_value">请选择:</string>
 
 </resources>

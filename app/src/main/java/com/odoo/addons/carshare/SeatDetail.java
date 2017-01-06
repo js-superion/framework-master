@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.odoo.App;
 import com.odoo.R;
+import com.odoo.addons.carshare.models.CarPoint;
 import com.odoo.addons.carshare.models.CarSeat;
 import com.odoo.addons.customers.utils.ShareUtil;
 import com.odoo.base.addons.ir.feature.OFileManager;
@@ -30,6 +31,8 @@ import com.odoo.core.utils.IntentUtils;
 import com.odoo.core.utils.OAlert;
 import com.odoo.core.utils.OResource;
 import com.odoo.core.utils.OStringColorUtil;
+
+import java.util.List;
 
 import odoo.controls.OField;
 import odoo.controls.OForm;
@@ -46,6 +49,7 @@ public class SeatDetail extends OdooCompatActivity
     private final String KEY_NEW_IMAGE = "key_new_image";
     private Bundle extras;
     private CarSeat carSeat;
+    private CarPoint carPoint;
     private SeatDetail seatDetail;
     private ODataRow record = null;
     private ImageView userImage = null;
@@ -83,6 +87,7 @@ public class SeatDetail extends OdooCompatActivity
         }
         app = (App) getApplicationContext();
         carSeat = new CarSeat(this, null);
+        carPoint = new CarPoint(this,null);
         extras = getIntent().getExtras();
         if (hasRecordInExtra())
             carShareType = Seat.Type.valueOf(extras.getString(KEY_CARSHARE_TYPE));
@@ -234,6 +239,18 @@ public class SeatDetail extends OdooCompatActivity
                         mEditMode = !mEditMode;
                         setupToolbar();
                     } else {
+                        String startPoint = values.getString("start_point");
+                        String endPoint = values.getString("end_point");
+                        List<ODataRow> pointRows = carPoint.select(
+                                new String[]{"name"},
+                                "id in(?,?)",
+                                new String[]{startPoint,endPoint}
+                        );
+//                        ODataRow startPointRow  = carPoint.browse(startPoint);
+//                        ODataRow endPointRow  = carPoint.browse(endPoint);
+
+                        values.put("start_point_name",pointRows.get(0).getString("name"));
+                        values.put("end_point_name",pointRows.get(1).getString("name"));
                         final int row_id = carSeat.insert(values);
                         if (row_id != OModel.INVALID_ROW_ID) {
                             finish();

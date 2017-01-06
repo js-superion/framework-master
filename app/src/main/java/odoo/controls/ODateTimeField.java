@@ -31,6 +31,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.odoo.R;
 import com.odoo.core.orm.fields.OColumn;
 import com.odoo.core.utils.ODateUtils;
 
@@ -127,7 +128,9 @@ public class ODateTimeField extends LinearLayout implements IOControlData,
     public void setValue(Object value) {
         mValue = value;
         if (value == null || value.toString().equals("false")) {
-            txvText.setText("No Value");
+//            txvText.setText("No Value");
+            //调用资源文件中定义的文本
+            txvText.setText(R.string.label_datetime_null_value);
             return;
         }
         txvText.setText(getDate(mValue.toString(), mParsePattern));

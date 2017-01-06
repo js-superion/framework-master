@@ -10,6 +10,8 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.format.DateFormat;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 import com.odoo.R;
 import com.odoo.addons.carshare.models.CarSeat;
 import com.odoo.core.orm.ODataRow;
+import com.odoo.core.orm.fields.types.ODate;
 import com.odoo.core.support.addons.fragment.BaseFragment;
 import com.odoo.core.support.addons.fragment.IOnSearchViewChangeListener;
 import com.odoo.core.support.addons.fragment.ISyncStatusObserverListener;
@@ -31,9 +34,15 @@ import com.odoo.core.support.list.OCursorListAdapter;
 import com.odoo.core.utils.IntentUtils;
 import com.odoo.core.utils.OControls;
 import com.odoo.core.utils.OCursorUtils;
+import com.odoo.core.utils.ODateUtils;
+
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Administrator on 2016-11-25.
@@ -86,14 +95,23 @@ public class Seat extends BaseFragment implements ISyncStatusObserverListener,
     @Override
     public void onViewBind(View view, Cursor cursor, ODataRow row) {
 
+        OControls.setText(view, R.id.start_point,row.getString("start_point")==null ? " "
+                :_s(R.string.label_start_point)+row.getString("start_point_name"));
         OControls.setText(view, R.id.end_point, row.getString("end_point")==null ? " "
                 :_s(R.string.label_end_point)+row.getString("end_point_name"));
         OControls.setText(view, R.id.person_num, row.getString("person_num")==null ? " "
-                :_s(R.string.label_person_num)+row.getString("person_num"));
-        OControls.setText(view, R.id.leave_time, row.getString("leave_time")==null ? " "
-                :_s(R.string.label_leave_time)+row.getString("leave_time"));
-        OControls.setText(view, R.id.wait_point,row.getString("wait_point")==null ? " "
-                :_s(R.string.label_wait_point)+row.getString("wait_point"));
+                :row.getString("person_num")+_s(R.string.label_person_num));
+        String leave_time =  row.getString("leave_time")==null ?"":row.getString("leave_time");
+        if(!"".equals(leave_time)){
+            DateTimeFormatter fmt = DateTimeFormat .forPattern("yyyy-MM-dd HH:mm:ss");
+            DateTime dateTime = DateTime.parse(leave_time,fmt);
+//            String leave_day =dateTime.toString("M-d", Locale.CHINESE);
+            String leave_day =dateTime.toString("M月d日", Locale.CHINESE);
+            String leave_day_time = dateTime.toString("HH:mm",Locale.CHINESE);
+            OControls.setText(view, R.id.seat_day, leave_day);
+            OControls.setText(view, R.id.seat_time, leave_day_time);
+        }
+
     }
 
     @Override
