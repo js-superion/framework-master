@@ -103,9 +103,10 @@ public class Seat extends BaseFragment implements ISyncStatusObserverListener,
                 :row.getString("person_num")+_s(R.string.label_person_num));
         String leave_time =  row.getString("leave_time")==null ?"":row.getString("leave_time");
         if(!"".equals(leave_time)){
+            String currentLeaveTime = ODateUtils.convertToDefault(leave_time,ODateUtils.DEFAULT_FORMAT);
+//            leave_time = ODateUtils.convertToDefault(leave_time);//从数据库中获取的时间，实际上是0时区，这里转为默认时区
             DateTimeFormatter fmt = DateTimeFormat .forPattern("yyyy-MM-dd HH:mm:ss");
-            DateTime dateTime = DateTime.parse(leave_time,fmt);
-//            String leave_day =dateTime.toString("M-d", Locale.CHINESE);
+            DateTime dateTime = DateTime.parse(currentLeaveTime,fmt);
             String leave_day =dateTime.toString("M月d日", Locale.CHINESE);
             String leave_day_time = dateTime.toString("HH:mm",Locale.CHINESE);
             OControls.setText(view, R.id.seat_day, leave_day);

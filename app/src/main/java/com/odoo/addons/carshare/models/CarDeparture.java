@@ -10,6 +10,7 @@ import com.odoo.core.orm.annotation.Odoo;
 import com.odoo.core.orm.fields.OColumn;
 import com.odoo.core.orm.fields.types.ODateTime;
 import com.odoo.core.orm.fields.types.OInteger;
+import com.odoo.core.orm.fields.types.OSelection;
 import com.odoo.core.orm.fields.types.OVarchar;
 import com.odoo.core.support.OUser;
 
@@ -26,15 +27,21 @@ public class CarDeparture extends OModel {
     public static final String AUTHORITY = BuildConfig.APPLICATION_ID +
             ".carshare.provider.content.sync.car_departure";
     OColumn name = new OColumn("单号", OVarchar.class);
-    OColumn departure_time = new OColumn("时间", ODateTime.class);
-    OColumn start_point = new OColumn("起点",CarPoint.class,OColumn.RelationType.ManyToOne);
+    OColumn departure_time = new OColumn("时间", ODateTime.class).setRequired();;
+    OColumn start_point = new OColumn("起点",CarPoint.class,OColumn.RelationType.ManyToOne).setRequired();;
     @Odoo.Functional(method="saveStartPointName", depends = {"start_point"}, store = true)
     OColumn start_point_name = new OColumn("起点名称",OVarchar.class).setLocalColumn();
-    OColumn end_point = new OColumn("终点",CarPoint.class,OColumn.RelationType.ManyToOne);
+    OColumn end_point = new OColumn("终点",CarPoint.class,OColumn.RelationType.ManyToOne).setRequired();;
     @Odoo.Functional(method="saveEndPointName", depends = {"end_point"}, store = true)
     OColumn end_point_name = new OColumn("终点名称",OVarchar.class).setLocalColumn();
-    OColumn seat_num = new OColumn("座位",OInteger.class);
-    OColumn mobile_phone = new OColumn("电话",OVarchar.class).setSize(15);
+//    OColumn seat_num = new OColumn("座位",OInteger.class);
+    OColumn seat_num = new OColumn("座位", OSelection.class)
+            .addSelection("1","1")
+            .addSelection("2","2")
+            .addSelection("3","3")
+            .addSelection("4","4")
+            .addSelection("5","5").setRequired();
+    OColumn mobile_phone = new OColumn("电话",OVarchar.class).setSize(20);
     OColumn remark = new OColumn("备注",OVarchar.class).setSize(80);
     OColumn details = new OColumn("途经站点",CarDepartureDetail.class, OColumn.RelationType.OneToMany)
             .setRelatedColumn("departure_id");

@@ -20,20 +20,31 @@ import com.odoo.addons.carshare.models.CarPoint;
 import com.odoo.addons.carshare.models.CarSeat;
 import com.odoo.addons.customers.utils.ShareUtil;
 import com.odoo.base.addons.ir.feature.OFileManager;
+import com.odoo.base.addons.res.ResPartner;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OModel;
 import com.odoo.core.orm.OValues;
+import com.odoo.core.orm.ServerDataHelper;
 import com.odoo.core.orm.fields.OColumn;
+import com.odoo.core.rpc.helper.OArguments;
 import com.odoo.core.rpc.helper.OdooFields;
 import com.odoo.core.rpc.helper.utils.gson.OdooResult;
 import com.odoo.core.support.OdooCompatActivity;
 import com.odoo.core.utils.IntentUtils;
 import com.odoo.core.utils.OAlert;
+import com.odoo.core.utils.ODateUtils;
 import com.odoo.core.utils.OResource;
 import com.odoo.core.utils.OStringColorUtil;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.util.List;
 
+import odoo.controls.ODateTimeField;
 import odoo.controls.OField;
 import odoo.controls.OForm;
 
@@ -42,7 +53,7 @@ import odoo.controls.OForm;
  */
 
 public class SeatDetail extends OdooCompatActivity
-        implements View.OnClickListener, OField.IOnFieldValueChangeListener{
+        implements View.OnClickListener, OField.IOnFieldValueChangeListener {
     public static final String TAG = SeatDetail.class.getSimpleName();
     public static String KEY_CARSHARE_TYPE = "carshare_type";
     private final String KEY_MODE = "key_edit_mode";
@@ -50,6 +61,7 @@ public class SeatDetail extends OdooCompatActivity
     private Bundle extras;
     private CarSeat carSeat;
     private CarPoint carPoint;
+    private ResPartner partner;
     private SeatDetail seatDetail;
     private ODataRow record = null;
     private ImageView userImage = null;
@@ -87,7 +99,8 @@ public class SeatDetail extends OdooCompatActivity
         }
         app = (App) getApplicationContext();
         carSeat = new CarSeat(this, null);
-        carPoint = new CarPoint(this,null);
+        carPoint = new CarPoint(this, null);
+        partner = new ResPartner(this ,null);
         extras = getIntent().getExtras();
         if (hasRecordInExtra())
             carShareType = Seat.Type.valueOf(extras.getString(KEY_CARSHARE_TYPE));
@@ -95,6 +108,7 @@ public class SeatDetail extends OdooCompatActivity
             mEditMode = true;
         setupToolbar();
     }
+
     private boolean hasRecordInExtra() {
         return extras != null && extras.containsKey(OColumn.ROW_ID);
     }
@@ -220,40 +234,49 @@ public class SeatDetail extends OdooCompatActivity
             case R.id.menu_seat_save:
                 OValues values = mForm.getValues();
                 if (values != null) {
-//                    switch (carShareType) {
-//                        case CarSeat:
-//                            values.put("customer", "false");
-//                            values.put("supplier", "true");
-//                            break;
-//                        default:
-//                            values.put("customer", "true");
-//                            break;
-//                    }
-//                    if (newImage != null) {
-//                        values.put("image_small", newImage);
-//                        values.put("large_image", newImage);
-//                    }
                     if (record != null) {
                         carSeat.update(record.getInt(OColumn.ROW_ID), values);
-                        Toast.makeText(this, R.string.toast_information_saved, Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, R.string.toast_saved_success, Toast.LENGTH_LONG).show();
                         mEditMode = !mEditMode;
                         setupToolbar();
                     } else {
-                        String startPoint = values.getString("start_point");
-                        String endPoint = values.getString("end_point");
-                        List<ODataRow> pointRows = carPoint.select(
-                                new String[]{"name"},
-                                "id in(?,?)",
-                                new String[]{startPoint,endPoint}
-                        );
-//                        ODataRow startPointRow  = carPoint.browse(startPoint);
-//                        ODataRow endPointRow  = carPoint.browse(endPoint);
+                        try {
+                            OArguments args = new OArguments();
+                            args.add("4");
+                            System.out.print("開始調用1");
+                            ServerDataHelper helper2 = partner.getServerDataHelper();
+                            ServerDataHelper helper = carSeat.getServerDataHelper();
+                            System.out.print("開始調用2");
+                            Object billno = helper.callMethod("get_bill_no", args);
+                            Thread.sleep(500);
 
-                        values.put("start_point_name",pointRows.get(0).getString("name"));
-                        values.put("end_point_name",pointRows.get(1).getString("name"));
-                        final int row_id = carSeat.insert(values);
-                        if (row_id != OModel.INVALID_ROW_ID) {
-                            finish();
+                            DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+                            String strLevaeTime = values.getString("leave_time");
+                            DateTime leaveTime = DateTime.parse(strLevaeTime, fmt);
+//                        DateTimeZone zeroTz =  DateTimeZone.UTC;
+//                        DateTime oneHourAgo = DateTime.now(zeroTz).minusHours(1);
+                            String utcOneHour = ODateUtils.getCurrentDateWithHour(-1); //获取的是utc时间
+                            DateTime oneHourTime = DateTime.parse(utcOneHour, fmt);
+                            if (leaveTime.isBefore(oneHourTime)) {
+                                Toast.makeText(this, R.string.toast_time_before_onehour, Toast.LENGTH_LONG).show();
+                                break;
+                            }
+                            int startPoint = values.getInt("start_point");
+                            int endPoint = values.getInt("end_point");
+                            ODataRow startPointRow = carPoint.browse(startPoint);
+                            ODataRow endPointRow = carPoint.browse(endPoint);
+//                        List<ODataRow> pointRows = null;
+//                        String sql = "SELECT name FROM car_point WHERE _id = ?";
+//                        pointRows = carPoint.query(sql, new String[]{startPoint});
+                            //排序是按照_id来，所有取索引时应该注意下0对应终点，1对应起点
+                            values.put("start_point_name", startPointRow.getString("name"));
+                            values.put("end_point_name", endPointRow.getString("name"));
+                            final int row_id = carSeat.insert(values);
+                            if (row_id != OModel.INVALID_ROW_ID) {
+                                finish();
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -278,14 +301,14 @@ public class SeatDetail extends OdooCompatActivity
                 break;
             case R.id.menu_seat_delete:
                 OAlert.showConfirm(this, OResource.string(this,
-                        R.string.confirm_are_you_sure_want_to_delete),
+                        R.string.label_confirm_delete),
                         new OAlert.OnAlertConfirmListener() {
                             @Override
                             public void onConfirmChoiceSelect(OAlert.ConfirmType type) {
                                 if (type == OAlert.ConfirmType.POSITIVE) {
                                     // Deleting record and finishing activity if success.
                                     if (carSeat.delete(record.getInt(OColumn.ROW_ID))) {
-                                        Toast.makeText(SeatDetail.this, R.string.toast_record_deleted,
+                                        Toast.makeText(SeatDetail.this, R.string.toast_deleted_success,
                                                 Toast.LENGTH_SHORT).show();
                                         finish();
                                     }
@@ -369,8 +392,6 @@ public class SeatDetail extends OdooCompatActivity
             Toast.makeText(this, R.string.toast_image_size_too_large, Toast.LENGTH_LONG).show();
         }
     }
-
-
 
 
 }

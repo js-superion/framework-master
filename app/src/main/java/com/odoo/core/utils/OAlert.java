@@ -93,9 +93,9 @@ public class OAlert {
 
     public static void showConfirm(Context context, String message, final OnAlertConfirmListener listener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Confirm");
+        builder.setTitle(R.string.label_alert_title);
         builder.setMessage(message);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.label_alert_ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (listener != null) {
@@ -103,7 +103,7 @@ public class OAlert {
                 }
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.label_alert_cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (listener != null) {
@@ -122,7 +122,7 @@ public class OAlert {
         builder.create().show();
     }
 
-    public static void inputDialog(Context context, String title, final OnUserInputListener listener) {
+    public static void inputDialog(final Context context, String title, final OnUserInputListener listener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -142,11 +142,11 @@ public class OAlert {
         builder.setView(linearLayout);
         if (title != null)
             builder.setTitle(title);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.label_alert_ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (TextUtils.isEmpty(edtInput.getText())) {
-                    edtInput.setError("Field required");
+                    edtInput.setError( OResource.string(context,R.string.label_alert_field_required));
                     edtInput.requestFocus();
                 } else {
                     if (listener != null) {
@@ -155,7 +155,7 @@ public class OAlert {
                 }
             }
         });
-        builder.setNegativeButton("Cancel", null);
+        builder.setNegativeButton(R.string.label_alert_cancel, null);
         builder.create().show();
     }
 

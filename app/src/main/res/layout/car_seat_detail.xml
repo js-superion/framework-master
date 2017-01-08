@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 app:fieldName="leave_time"
                 app:controlLabel="@string/label_leave_time"
-                app:parsePattern="MMM dd yyyy, HH:MM"
+                app:parsePattern="MMM dd yyyy, HH:mm"
                 app:fieldTextAppearance="?android:textAppearanceMedium"
                 app:showLabel="false"></odoo.controls.OField>
 
@@ -134,7 +134,7 @@
                     android:layout_height="wrap_content"
                     app:fieldName="leave_time"
                     app:controlLabel="@string/label_leave_time"
-                    app:parsePattern="yyyy MMM dd ,HH:mm"
+                    app:parsePattern="yyyy MMM dd ,HH:mm a"
                     app:iconResource="@drawable/ic_action_time_clock"
                     app:fieldTextAppearance="?android:textAppearanceLarge"
                     app:showLabel="false"></odoo.controls.OField>
@@ -180,6 +180,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:fieldName="person_num"
+                    app:defaultFieldValue="1"
                     app:controlLabel="@string/label_person_num2"
                     app:fieldTextAppearance="?android:textAppearanceMedium"
                     app:iconResource="@drawable/ic_action_customers"></odoo.controls.OField>

@@ -129,6 +129,10 @@
     <string name="summary_notification_ring_tone">设置提醒铃声</string>
     <string name="summary_sync_interval">数据同步执行的频率</string>
     <string name="summary_sync_limit">同步多久之前的数据</string>
-
+    <!--OAlert 弹出框文字-->
+    <string name="label_alert_title">确认</string>
+    <string name="label_alert_cancel">否</string>
+    <string name="label_alert_ok">是</string>
+    <string name="label_alert_field_required">不能为空</string>
 
 </resources>

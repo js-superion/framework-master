@@ -28,5 +28,10 @@
     <!--这里定义的label，分别是ODatetimeField和OSelectionField中调用-->
     <string name="label_datetime_null_value">点击选择时间</string>
     <string name="label_selection_null_value">请选择:</string>
+    <string name="label_confirm_delete">您确定删除?</string>
+    <!--Toast 提示-->
+    <string name="toast_saved_success">保存成功</string>
+    <string name="toast_deleted_success">刪除成功</string>
+    <string name="toast_time_before_onehour">无法回到过去^_^ \n请重选时间</string>
 
 </resources>
