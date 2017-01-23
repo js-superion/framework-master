@@ -33,7 +33,7 @@ public class CarSeat extends OModel {
 
     OColumn name = new OColumn("单号", OVarchar.class);
     OColumn mobile_phone = new OColumn("手机", OVarchar.class).setSize(20);
-    @Odoo.onChange(method = "onDateTimeChange")
+//    @Odoo.onChange(method = "onDateTimeChange")
     OColumn leave_time = new OColumn("时间", ODateTime.class).setRequired();;
     OColumn start_point = new OColumn("起点",CarPoint.class,OColumn.RelationType.ManyToOne).setRequired();;
     @Odoo.Functional(method="saveStartPointName", depends = {"start_point"}, store = true)

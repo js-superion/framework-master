@@ -41,7 +41,10 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.List;
 
 import odoo.controls.ODateTimeField;
@@ -240,15 +243,6 @@ public class SeatDetail extends OdooCompatActivity
                         mEditMode = !mEditMode;
                         setupToolbar();
                     } else {
-                        try {
-                            OArguments args = new OArguments();
-                            args.add("4");
-                            System.out.print("開始調用1");
-                            ServerDataHelper helper2 = partner.getServerDataHelper();
-                            ServerDataHelper helper = carSeat.getServerDataHelper();
-                            System.out.print("開始調用2");
-                            Object billno = helper.callMethod("get_bill_no", args);
-                            Thread.sleep(500);
 
                             DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
                             String strLevaeTime = values.getString("leave_time");
@@ -269,15 +263,14 @@ public class SeatDetail extends OdooCompatActivity
 //                        String sql = "SELECT name FROM car_point WHERE _id = ?";
 //                        pointRows = carPoint.query(sql, new String[]{startPoint});
                             //排序是按照_id来，所有取索引时应该注意下0对应终点，1对应起点
+                        DataPost dp = new DataPost();
+                        dp.execute(values);
                             values.put("start_point_name", startPointRow.getString("name"));
                             values.put("end_point_name", endPointRow.getString("name"));
-                            final int row_id = carSeat.insert(values);
-                            if (row_id != OModel.INVALID_ROW_ID) {
-                                finish();
-                            }
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+//                            final int row_id = carSeat.insert(values);
+//                            if (row_id != OModel.INVALID_ROW_ID) {
+                        finish();
+//                            }
                     }
                 }
                 break;
@@ -338,23 +331,25 @@ public class SeatDetail extends OdooCompatActivity
         }
     }
 
-    private class BigImageLoader extends AsyncTask<Integer, Void, String> {
+    private class DataPost extends AsyncTask<OValues, Void, String> {
 
         @Override
-        protected String doInBackground(Integer... params) {
-            String image = null;
+        protected String doInBackground(OValues... values) {
+            String billNo = null;
             try {
+
+                OArguments args = new OArguments();
+                HashMap<String, Object> data = new HashMap<>();
+                data.put("mobile_phone", values[0].getString("mobile_phone"));
+                args.add(new JSONArray().put(1));
+                args.add(new JSONObject());
+                Object result = carSeat.getServerDataHelper().callMethod("create", args,null,data);
                 Thread.sleep(300);
-                OdooFields fields = new OdooFields();
-                fields.addAll(new String[]{"image_medium"});
-                OdooResult record = carSeat.getServerDataHelper().read(null, params[0]);
-                if (record != null && !record.getString("image_medium").equals("false")) {
-                    image = record.getString("image_medium");
-                }
+                billNo = record.getString("image_medium");
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return image;
+            return billNo;
         }
 
         @Override
