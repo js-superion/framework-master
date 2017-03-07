@@ -15,6 +15,11 @@ import com.odoo.core.orm.fields.types.OInteger;
 import com.odoo.core.orm.fields.types.OSelection;
 import com.odoo.core.orm.fields.types.OVarchar;
 import com.odoo.core.rpc.helper.OArguments;
+import com.odoo.core.rpc.helper.ODomain;
+import com.odoo.core.rpc.helper.ORecordValues;
+import com.odoo.core.rpc.helper.OdooFields;
+import com.odoo.core.rpc.helper.utils.gson.OdooRecord;
+import com.odoo.core.rpc.helper.utils.gson.OdooResult;
 import com.odoo.core.support.OUser;
 
 import org.json.JSONArray;
@@ -110,6 +115,54 @@ public class CarSeat extends OModel {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public boolean createCarSeat(OValues value) {
+        OValues values = new OValues();
+        values.put("name", value.getString("name"));
+        values.put("mobile_phone", value.getString("mobile_phone"));
+        values.put("leave_time", value.getString("leave_time"));
+        values.put("start_point", value.getString("start_point"));
+        values.put("end_point", value.getString("end_point"));
+        values.put("start_point_name", value.getString("start_point_name"));
+        values.put("end_point_name", value.getString("end_point_name"));
+//        values.put("wait_point", value.getString("wait_point"));
+        values.put("person_num", value.getString("person_num"));
+        values.put("id", value.get("id"));
+        insert(values);
+        return true;
+    }
+
+    public static ORecordValues valuesToData(OModel model, OValues value) {
+        ORecordValues data = new ORecordValues();
+
+        data.put("name", value.get("name"));
+        data.put("mobile_phone", value.getString("mobile_phone"));
+        data.put("leave_time", value.get("leave_time"));
+        int v1 = value.getInt("start_point");
+        int v2 = value.getInt("end_point");
+        ODataRow startPointRow = model.browse(v1);
+        ODataRow endPointRow = model.browse(v2);
+        data.put("start_point",startPointRow.getInt("id"));//获取本地数据对应的服务端id,传给服务端
+        data.put("end_point", endPointRow.getInt("id"));
+        value.put("start_point_name", startPointRow.getString("name"));
+        value.put("end_point_name", endPointRow.getString("name"));
+//        data.put("wait_point", value.getString("wait_point"));
+        data.put("person_num", value.get("person_num"));
+        return data;
+    }
+
+    public String getNameFromServer(Integer serverId) {
+        ODomain domain = new ODomain();
+        domain.add("id", "=", serverId);
+        OdooFields fields = new OdooFields();
+        fields.addAll(new String[]{"name"});
+        OdooResult result = getServerDataHelper().read(fields, serverId);
+        String billNo = "false";
+        if (result != null && result.has("name")) {
+            billNo = result.getString("name");
+        }
+        return billNo;
     }
 
 

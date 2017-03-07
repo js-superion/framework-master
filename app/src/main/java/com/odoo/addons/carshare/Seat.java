@@ -84,7 +84,7 @@ public class Seat extends BaseFragment implements ISyncStatusObserverListener,
         mAdapter = new OCursorListAdapter(getActivity(), null, R.layout.car_seat_row);
         mAdapter.setOnViewBindListener(this);
         //this setHasSectionIndexers second param represent quick search view on activity
-        mAdapter.setHasSectionIndexers(true, "remark");
+        mAdapter.setHasSectionIndexers(true, "name");
         mPartnersList.setAdapter(mAdapter);
         mPartnersList.setFastScrollAlwaysVisible(true);//
         mPartnersList.setOnItemClickListener(this);

@@ -24,7 +24,7 @@
                 android:id="@+id/seat_day"
                 android:textColor="@color/body_text_1"
                 android:fontFamily="@string/font_normal"
-                android:textAppearance="?android:textAppearance"
+                android:textAppearance="?android:textAppearanceMedium"
                 android:gravity="center_horizontal"
                 android:layout_width="fill_parent"
                 android:layout_weight="1"

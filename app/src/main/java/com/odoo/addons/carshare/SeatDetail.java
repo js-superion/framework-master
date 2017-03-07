@@ -1,5 +1,6 @@
 package com.odoo.addons.carshare;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -27,6 +28,7 @@ import com.odoo.core.orm.OValues;
 import com.odoo.core.orm.ServerDataHelper;
 import com.odoo.core.orm.fields.OColumn;
 import com.odoo.core.rpc.helper.OArguments;
+import com.odoo.core.rpc.helper.ORecordValues;
 import com.odoo.core.rpc.helper.OdooFields;
 import com.odoo.core.rpc.helper.utils.gson.OdooResult;
 import com.odoo.core.support.OdooCompatActivity;
@@ -255,21 +257,21 @@ public class SeatDetail extends OdooCompatActivity
                                 Toast.makeText(this, R.string.toast_time_before_onehour, Toast.LENGTH_LONG).show();
                                 break;
                             }
-                            int startPoint = values.getInt("start_point");
-                            int endPoint = values.getInt("end_point");
-                            ODataRow startPointRow = carPoint.browse(startPoint);
-                            ODataRow endPointRow = carPoint.browse(endPoint);
+//                            int startPoint = values.getInt("start_point");
+//                            int endPoint = values.getInt("end_point");
+//                            ODataRow startPointRow = carPoint.browse(startPoint);
+//                            ODataRow endPointRow = carPoint.browse(endPoint);
 //                        List<ODataRow> pointRows = null;
 //                        String sql = "SELECT name FROM car_point WHERE _id = ?";
 //                        pointRows = carPoint.query(sql, new String[]{startPoint});
                             //排序是按照_id来，所有取索引时应该注意下0对应终点，1对应起点
                         DataPost dp = new DataPost();
                         dp.execute(values);
-                            values.put("start_point_name", startPointRow.getString("name"));
-                            values.put("end_point_name", endPointRow.getString("name"));
+//                            values.put("start_point_name", startPointRow.getString("name"));
+//                            values.put("end_point_name", endPointRow.getString("name"));
 //                            final int row_id = carSeat.insert(values);
 //                            if (row_id != OModel.INVALID_ROW_ID) {
-                        finish();
+//                        finish();
 //                            }
                     }
                 }
@@ -332,20 +334,34 @@ public class SeatDetail extends OdooCompatActivity
     }
 
     private class DataPost extends AsyncTask<OValues, Void, String> {
+        private ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(SeatDetail.this);
+            progressDialog.setTitle(R.string.title_working);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            progressDialog.setMessage("保存中...");
+//            progressDialog.setMax(horizontalScrollView.getChildCount());
+            progressDialog.setCancelable(false);
+            progressDialog.setProgress(1);
+            progressDialog.show();
+        }
 
         @Override
         protected String doInBackground(OValues... values) {
             String billNo = null;
             try {
+                ORecordValues data = CarSeat.valuesToData(carPoint, values[0]);
+                if (data != null) {
 
-                OArguments args = new OArguments();
-                HashMap<String, Object> data = new HashMap<>();
-                data.put("mobile_phone", values[0].getString("mobile_phone"));
-                args.add(new JSONArray().put(1));
-                args.add(new JSONObject());
-                Object result = carSeat.getServerDataHelper().callMethod("create", args,null,data);
-                Thread.sleep(300);
-                billNo = record.getString("image_medium");
+                    int serverId = carSeat.getServerDataHelper().createOnServer(data);
+                    values[0].put("id", serverId);
+                    billNo = carSeat.getNameFromServer(serverId);
+                    values[0].put("name",billNo);
+                    carSeat.createCarSeat(values[0]);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -355,15 +371,16 @@ public class SeatDetail extends OdooCompatActivity
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            if (result != null) {
-                if (!result.equals("false")) {
-                    OValues values = new OValues();
-                    values.put("large_image", result);
-                    carSeat.update(record.getInt(OColumn.ROW_ID), values);
-                    record.put("large_image", result);
-//                    setCustomerImage();
-                }
-            }
+            finish();
+//            if (result != null) {
+//                if (!result.equals("false")) {
+//                    OValues values = new OValues();
+////                    values.put("large_image", result);
+////                    carSeat.update(record.getInt(OColumn.ROW_ID), values);
+////                    record.put("large_image", result);
+////                    setCustomerImage();
+//                }
+//            }
         }
     }
 
